@@ -1,0 +1,18 @@
+{
+    "name": "Tesrym.AnchorSystem.Editor",
+    "rootNamespace": "",
+    "references": [
+        "GUID:0eee18d1d2e250140a03392ef6eff156"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

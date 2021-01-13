@@ -1,0 +1,17 @@
+{
+  "name": "com.tesrym.anchor",
+  "version": "0.0.1",
+  "displayName": "Anchor",
+  "description": "Floating Origin System",
+  "keywords": [
+    "keyword1",
+    "keyword2",
+    "keyword3"
+  ],
+  "author": {
+    "name": "Tesrym",
+    "email": "tesrym@gmail.com",
+    "url": "http://www.tesrym.com"
+  },
+  "hideInEditor": false
+}
