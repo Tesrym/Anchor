@@ -7,11 +7,12 @@ namespace Tesrym.AnchorSystem {
     [CustomEditor(typeof(Anchor))]
     public class OriginEditor : Editor {
 
-        Anchor anchor;
+        private Anchor anchor;
 
         private SerializedProperty threshold;
         private SerializedProperty offset;
         private SerializedProperty offsetEvent;
+        private SerializedProperty originEvent;
 
         private SerializedProperty showAnchor;
         private SerializedProperty showOrigin;
@@ -20,6 +21,7 @@ namespace Tesrym.AnchorSystem {
         private static Vector3 offsetAccumulation = Vector3.zero;
         public static bool IsSceneWindowVisible => SceneView.lastActiveSceneView != null;
         private static bool WasVisible = true;
+        //A simple "scene window was not active previous frame, but now it is".
         private static bool SceneViewNeedsUpdate {
             get {
                 if (!WasVisible && IsSceneWindowVisible)
@@ -31,9 +33,10 @@ namespace Tesrym.AnchorSystem {
         private void OnEnable() {
             anchor = target as Anchor;
 
-            threshold = serializedObject.FindProperty("radius");
+            threshold = serializedObject.FindProperty("_radius");
             offset = serializedObject.FindProperty("_worldOrigin");
-            offsetEvent = serializedObject.FindProperty("offsetEvent");
+            offsetEvent = serializedObject.FindProperty("offsetUnityEvent");
+            originEvent = serializedObject.FindProperty("originUnityEvent");
 
             showAnchor = serializedObject.FindProperty("showAnchor");
             showOrigin = serializedObject.FindProperty("showOrigin");
@@ -43,7 +46,10 @@ namespace Tesrym.AnchorSystem {
 
         [InitializeOnEnterPlayMode]
         public static void OnEnterPlaymodeInEditor() {
-            Anchor.OnOffsetEvent += MoveEditorCamera;
+            Anchor.OffsetEvent += MoveEditorCamera;
+            //Editor script needs its own update.
+            //When scene window is inactive due to for example fullscreen game window, the editor script cannot move scene camera.
+            //Instead we accumulate the offset and apply it immediately when scene window is visible again.
             EditorApplication.update += Update;
 
         }
@@ -55,7 +61,7 @@ namespace Tesrym.AnchorSystem {
             WasVisible = IsSceneWindowVisible;
 
             if (!EditorApplication.isPlaying) {
-                Anchor.OnOffsetEvent -= MoveEditorCamera;
+                Anchor.OffsetEvent -= MoveEditorCamera;
                 EditorApplication.update -= Update;
             }
         }
@@ -65,8 +71,6 @@ namespace Tesrym.AnchorSystem {
 
             GUIStyle style = EditorStyles.helpBox;
             style.alignment = TextAnchor.MiddleCenter;
-            style.richText = true;
-            //style.fontSize = 16;
 
             if (Application.isPlaying) {
                 GUILayout.BeginVertical(timer.doubleValue.ToString() + "ms.", style);
@@ -84,7 +88,6 @@ namespace Tesrym.AnchorSystem {
                 return;
             }
 
-            float defaultLabelWidth = EditorGUIUtility.labelWidth;
             EditorGUIUtility.labelWidth = 50;
             float totalWidth = EditorGUIUtility.currentViewWidth;
             GUILayoutOption[] leftOptions = new GUILayoutOption[] {
@@ -118,6 +121,7 @@ namespace Tesrym.AnchorSystem {
 
             EditorGUI.BeginChangeCheck();
             EditorGUILayout.PropertyField(offsetEvent);
+            EditorGUILayout.PropertyField(originEvent);
             if (EditorGUI.EndChangeCheck()) {
                 serializedObject.ApplyModifiedProperties();
             }
@@ -129,7 +133,7 @@ namespace Tesrym.AnchorSystem {
             if (IsSceneWindowVisible) {
                 SceneView.lastActiveSceneView.pivot -= offsetAccumulation;
                 offsetAccumulation = Vector3.zero;
-            }
+            } //Else accumulate offset
         }
 
     }

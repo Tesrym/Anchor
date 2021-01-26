@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.Events;
 using UnityEngine.Profiling;
+
 #if UNITY_EDITOR
 using System;
 using System.Diagnostics;
@@ -17,11 +18,11 @@ namespace Tesrym.AnchorSystem {
         } = null;
 
         [SerializeField]
-        private float radius = 1000;
+        private float _radius = 1000;
         public static float Radius {
             get {
                 if (Instance != null) {
-                    return Instance.radius;
+                    return Instance._radius;
                 } else {
                     Debug.LogWarning("Something is trying to use the floating origin system, but does not exist!");
                     return float.MaxValue;
@@ -29,7 +30,7 @@ namespace Tesrym.AnchorSystem {
             }
             set {
                 if (Instance != null) {
-                    Instance.radius = value;
+                    Instance._radius = value;
                 } else {
                     Debug.LogWarning("Something is trying to use the floating origin system, but does not exist!");
                     //Do nothing
@@ -58,10 +59,13 @@ namespace Tesrym.AnchorSystem {
             }
         }
 
-        public UnityEvent<Vector3> offsetEvent;
-        public UnityEvent<Vector3> originEvent;
+        //Unity events for simplicity
+        public UnityEvent<Vector3> offsetUnityEvent;
+        public UnityEvent<Vector3> originUnityEvent;
 
-        public static event Action<Vector3> OnOffsetEvent = (offset) => {};
+        //Required for editor script and initially not intended for builds.
+        //But leaving it for builds anyway.
+        public static event Action<Vector3> OffsetEvent = (offset) => {};
 
 #if UNITY_EDITOR
         [SerializeField]
@@ -91,15 +95,16 @@ namespace Tesrym.AnchorSystem {
         }
 
         private void OnDrawGizmos() {
-            //Selection radius
+            //Animated selection radius for the user in green.
+            //Shows which mode is used, anchor (blue) or scene origin (red).
             float selection = .99f - (1 - Mathf.Sin(Time.time * 5)) * .1f;
 
             if (showAnchor) {
                 Gizmos.color = Color.blue;
                 if (Application.isPlaying && Instance != null) {
-                    Gizmos.DrawWireSphere(Vector3.zero, radius);
+                    Gizmos.DrawWireSphere(Vector3.zero, _radius);
                     Gizmos.color = Color.green - new Color(0, 0, 0, .85f);
-                    Gizmos.DrawWireSphere(Vector3.zero, radius * selection);
+                    Gizmos.DrawWireSphere(Vector3.zero, _radius * selection);
                     Gizmos.DrawRay(transform.position, -transform.position);
                     Gizmos.DrawWireSphere(Vector3.zero, 10);
                 }
@@ -109,12 +114,12 @@ namespace Tesrym.AnchorSystem {
                 Gizmos.color = Color.red;
                 if (Application.isPlaying && Instance != null) {
                     Gizmos.DrawRay(transform.position, WorldOrigin - transform.position);
-                    Gizmos.DrawWireSphere(WorldOrigin, radius);
+                    Gizmos.DrawWireSphere(WorldOrigin, _radius);
                 } else {
                     Gizmos.DrawRay(transform.position, -transform.position);
-                    Gizmos.DrawWireSphere(Vector3.zero, radius);
+                    Gizmos.DrawWireSphere(Vector3.zero, _radius);
                     Gizmos.color = Color.green - new Color(0, 0, 0, .5f);
-                    Gizmos.DrawWireSphere(Vector3.zero, radius * selection);
+                    Gizmos.DrawWireSphere(Vector3.zero, _radius * selection);
                 }
             }
         }
@@ -123,22 +128,24 @@ namespace Tesrym.AnchorSystem {
             Vector3 offset = transform.position;
 
             if (offset.magnitude > Radius) {
+
 #if UNITY_EDITOR
                 timer.Restart();
 #endif
+
                 Profiler.BeginSample("Anchor reposition", this);
                 
                 MoveRootGameObjects(offset);
                 MoveTrailRenderers(offset);
                 MoveLineRenderers(offset);
                 MoveParticles(offset);
-                OnOffsetEvent(offset);
+                OffsetEvent(offset);
 
                 Profiler.EndSample();
 
-                offsetEvent.Invoke(offset);
+                offsetUnityEvent.Invoke(offset);
                 WorldOrigin -= offset;
-                originEvent.Invoke(WorldOrigin);
+                originUnityEvent.Invoke(WorldOrigin);
 
 #if UNITY_EDITOR
                 timer.Stop();
@@ -146,25 +153,38 @@ namespace Tesrym.AnchorSystem {
                 double milliSeconds = nanoSeconds / 1000000.0;
                 frameTime = milliSeconds;
 #endif
+
             }
             
         }
 
         private void Stop() {
             Vector3 offset = WorldOrigin;
+
+#if UNITY_EDITOR
+            timer.Restart();
+#endif
+
             Profiler.BeginSample("Anchor stop", this);
             
             MoveRootGameObjects(offset);
             MoveTrailRenderers(offset);
             MoveLineRenderers(offset);
             MoveParticles(offset);
-            OnOffsetEvent(offset);
+            OffsetEvent(offset);
 
             Profiler.EndSample();
 
-            offsetEvent.Invoke(offset);
+            offsetUnityEvent.Invoke(offset);
             WorldOrigin = Vector3.zero;
-            originEvent.Invoke(WorldOrigin);
+            originUnityEvent.Invoke(WorldOrigin);
+
+#if UNITY_EDITOR
+            timer.Stop();
+            double nanoSeconds = 1000000000.0 * timer.ElapsedTicks / Stopwatch.Frequency;
+            double milliSeconds = nanoSeconds / 1000000.0;
+            frameTime = milliSeconds;
+#endif
 
         }
 
