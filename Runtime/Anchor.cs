@@ -143,9 +143,9 @@ namespace Tesrym.AnchorSystem {
 
                 Profiler.EndSample();
 
-                offsetUnityEvent.Invoke(offset);
+                offsetUnityEvent?.Invoke(offset);
                 WorldOrigin -= offset;
-                originUnityEvent.Invoke(WorldOrigin);
+                originUnityEvent?.Invoke(WorldOrigin);
 
 #if UNITY_EDITOR
                 timer.Stop();
@@ -175,9 +175,9 @@ namespace Tesrym.AnchorSystem {
 
             Profiler.EndSample();
 
-            offsetUnityEvent.Invoke(offset);
+            offsetUnityEvent?.Invoke(offset);
             WorldOrigin = Vector3.zero;
-            originUnityEvent.Invoke(WorldOrigin);
+            originUnityEvent?.Invoke(WorldOrigin);
 
 #if UNITY_EDITOR
             timer.Stop();
