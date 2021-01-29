@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 
@@ -11,8 +9,11 @@ namespace Tesrym.AnchorSystem {
 
         private SerializedProperty threshold;
         private SerializedProperty offset;
+
+#if UNITY_2020_1_OR_NEWER
         private SerializedProperty offsetEvent;
         private SerializedProperty originEvent;
+#endif
 
         private SerializedProperty showAnchor;
         private SerializedProperty showOrigin;
@@ -35,8 +36,11 @@ namespace Tesrym.AnchorSystem {
 
             threshold = serializedObject.FindProperty("_radius");
             offset = serializedObject.FindProperty("_worldOrigin");
+
+#if UNITY_2020_1_OR_NEWER
             offsetEvent = serializedObject.FindProperty("offsetUnityEvent");
             originEvent = serializedObject.FindProperty("originUnityEvent");
+#endif
 
             showAnchor = serializedObject.FindProperty("showAnchor");
             showOrigin = serializedObject.FindProperty("showOrigin");
@@ -119,12 +123,14 @@ namespace Tesrym.AnchorSystem {
             EditorGUILayout.EndHorizontal();
             EditorGUILayout.EndVertical();
 
+#if UNITY_2020_1_OR_NEWER
             EditorGUI.BeginChangeCheck();
             EditorGUILayout.PropertyField(offsetEvent);
             EditorGUILayout.PropertyField(originEvent);
             if (EditorGUI.EndChangeCheck()) {
                 serializedObject.ApplyModifiedProperties();
             }
+#endif
 
         }
 
