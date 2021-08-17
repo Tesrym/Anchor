@@ -80,18 +80,15 @@ namespace Tesrym.AnchorSystem {
         private void OnEnable() {
             Instance = this;
             Run();
-
         }
 
-        private void LateUpdate() {
+        private void FixedUpdate() {
             Run();
-
         }
 
         private void OnDisable() {
             Stop();
             Instance = null;
-
         }
 
         private void OnDrawGizmos() {
