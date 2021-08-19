@@ -1,4 +1,6 @@
 # Changelog
+## [1.0.2] - 2021-08-18
+### Change loop from LateUpdate to FixedUpdate
 ## [1.0.1]
 ### Event null check
 ## [1.0.0] - 2021-01-29
