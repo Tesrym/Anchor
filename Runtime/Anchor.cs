@@ -31,6 +31,9 @@ namespace Tesrym.AnchorSystem {
         /// </summary>
         [SerializeField]
         private float _radius = 1000;
+        /// <summary>
+        /// The min radius for Anchor to offset the scene
+        /// </summary>
         public static float Radius {
             get {
                 if (Instance != null) {
@@ -55,6 +58,9 @@ namespace Tesrym.AnchorSystem {
         /// </summary>
         [SerializeField]
         private Vector3 _worldOrigin = Vector3.zero;
+        /// <summary>
+        /// The current real world origin coordinate relative to the scene origin
+        /// </summary>
         public static Vector3 WorldOrigin {
             get {
                 if (Instance != null) {
