@@ -7,6 +7,7 @@ namespace Tesrym.AnchorSystem {
 
         private Anchor anchor;
 
+        private SerializedProperty replace;
         private SerializedProperty threshold;
         private SerializedProperty offset;
 
@@ -34,6 +35,7 @@ namespace Tesrym.AnchorSystem {
         private void OnEnable() {
             anchor = target as Anchor;
 
+            replace = serializedObject.FindProperty("_replaceSceneWhenDisable");
             threshold = serializedObject.FindProperty("_radius");
             offset = serializedObject.FindProperty("_worldOrigin");
 
@@ -92,7 +94,6 @@ namespace Tesrym.AnchorSystem {
                 return;
             }
 
-            EditorGUIUtility.labelWidth = 50;
             float totalWidth = EditorGUIUtility.currentViewWidth;
             GUILayoutOption[] leftOptions = new GUILayoutOption[] {
                 GUILayout.MaxWidth(totalWidth * .75f)
@@ -102,8 +103,12 @@ namespace Tesrym.AnchorSystem {
             };
 
             EditorGUILayout.BeginVertical();
-            EditorGUILayout.BeginHorizontal();
             EditorGUI.BeginChangeCheck();
+            EditorGUIUtility.labelWidth = totalWidth - 55;
+            EditorGUILayout.PropertyField(replace);
+            
+            EditorGUIUtility.labelWidth = 50;
+            EditorGUILayout.BeginHorizontal();
             threshold.floatValue = EditorGUILayout.FloatField("Radius", threshold.floatValue, leftOptions);
             showAnchor.boolValue = EditorGUILayout.Toggle("Show", showAnchor.boolValue, rightOptions);
             if (EditorGUI.EndChangeCheck()) {
