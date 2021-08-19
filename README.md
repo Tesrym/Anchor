@@ -11,3 +11,7 @@
 | Origin	| Shows the anchors offset from scene origin. |
 | Show		| Show anchor/origin gizmos. |
 | Events	| Vector events for when anchor moves. |
+
+## Documentation
+
+Detailed documentation is available [here](https://fintokmak.github.io/Anchor/)
