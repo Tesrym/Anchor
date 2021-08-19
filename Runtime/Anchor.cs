@@ -308,6 +308,9 @@ namespace Tesrym.AnchorSystem {
 
                 particleSystem.SetParticles(parts, num);
 
+                // TODO: When particle trail API is available, add the particle trail offset here
+                // relative link: https://forum.unity.com/threads/is-it-possible-to-alter-particle-system-trail-parameters-from-a-trigger-collider.942292/
+
                 if (wasPlaying)
                     particleSystem.Play();
             }
