@@ -1,0 +1,140 @@
+{
+  "homepages": [],
+  "source_base_path": "/Users/fangjunzhou/Documents/Unity_Project/mirror-demo/docfx_project",
+  "xrefmap": "xrefmap.yml",
+  "files": [
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Tesrym.AnchorSystem.Anchor.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Tesrym.AnchorSystem.Anchor.html",
+          "hash": "7juOaXW/aq1HBiYsINkbt8yfVtg4QouMSaBjAw4/IRY="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Tesrym.AnchorSystem.AnchorExtensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Tesrym.AnchorSystem.AnchorExtensions.html",
+          "hash": "bh+lP2eQhyGuWCtRQaL9OFX/3KlosPpBg2DST9w+wRQ="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Tesrym.AnchorSystem.OriginEditor.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Tesrym.AnchorSystem.OriginEditor.html",
+          "hash": "eQdREd4RkHuPy8j6s+zjYb+uS7+rgmdJw565HK8IPxg="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Tesrym.AnchorSystem.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Tesrym.AnchorSystem.html",
+          "hash": "lPnH6nRWTpUHgsKyad/YLLVldMpJ0cqzoCfVV8QNA1U="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "api/index.md",
+      "output": {
+        ".html": {
+          "relative_path": "api/index.html",
+          "hash": "hPqQHwSMyf2vkjeS0FJB+WW2E1Y2N7t58BLshQ6Aceo="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "articles/intro.md",
+      "output": {
+        ".html": {
+          "relative_path": "articles/intro.html",
+          "hash": "73SZ06qe3DK+CVt2aEO2IILmTSRDxllL/rvcnz/B4yk="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "index.md",
+      "output": {
+        ".html": {
+          "relative_path": "index.html",
+          "hash": "CiILs2ltd05yRUIjuQ2qhKaUXzNlihUwKIh2/7diOYo="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    }
+  ],
+  "incremental_info": [
+    {
+      "status": {
+        "can_incremental": false,
+        "details": "Cannot build incrementally because last build info is missing.",
+        "incrementalPhase": "build",
+        "total_file_count": 0,
+        "skipped_file_count": 0,
+        "full_build_reason_code": "NoAvailableBuildCache"
+      },
+      "processors": {
+        "ConceptualDocumentProcessor": {
+          "can_incremental": false,
+          "incrementalPhase": "build",
+          "total_file_count": 3,
+          "skipped_file_count": 0
+        },
+        "ManagedReferenceDocumentProcessor": {
+          "can_incremental": false,
+          "incrementalPhase": "build",
+          "total_file_count": 4,
+          "skipped_file_count": 0
+        },
+        "TocDocumentProcessor": {
+          "can_incremental": false,
+          "details": "Processor TocDocumentProcessor cannot support incremental build because the processor doesn't implement ISupportIncrementalDocumentProcessor interface.",
+          "incrementalPhase": "build",
+          "total_file_count": 0,
+          "skipped_file_count": 0
+        }
+      }
+    },
+    {
+      "status": {
+        "can_incremental": false,
+        "details": "Cannot support incremental post processing, the reason is: last post processor info is null.",
+        "incrementalPhase": "postProcessing",
+        "total_file_count": 0,
+        "skipped_file_count": 0
+      },
+      "processors": {}
+    }
+  ],
+  "version_info": {},
+  "groups": [
+    {
+      "xrefmap": "xrefmap.yml"
+    }
+  ]
+}
