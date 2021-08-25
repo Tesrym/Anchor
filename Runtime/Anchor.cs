@@ -93,7 +93,9 @@ namespace Tesrym.AnchorSystem {
 
         //Required for editor script and initially not intended for builds.
         //But leaving it for builds anyway.
+#if UNITY_EDITOR
         public static event Action<Vector3> OffsetEvent = (offset) => {};
+#endif
 
 #if UNITY_EDITOR
         /// <summary>
@@ -137,6 +139,7 @@ namespace Tesrym.AnchorSystem {
             Instance = null;
         }
 
+#if UNITY_EDITOR
         private void OnDrawGizmos() {
             //Animated selection radius for the user in green.
             //Shows which mode is used, anchor (blue) or scene origin (red).
@@ -166,6 +169,7 @@ namespace Tesrym.AnchorSystem {
                 }
             }
         }
+#endif
 
         /// <summary>
         /// The main logic of Anchor scene offset
@@ -185,8 +189,10 @@ namespace Tesrym.AnchorSystem {
                 MoveTrailRenderers(offset);
                 MoveLineRenderers(offset);
                 MoveParticles(offset);
+#if UNITY_EDITOR
                 OffsetEvent(offset);
-
+#endif
+                
                 Profiler.EndSample();
 
                 offsetUnityEvent?.Invoke(offset);
@@ -221,7 +227,9 @@ namespace Tesrym.AnchorSystem {
             MoveTrailRenderers(offset);
             MoveLineRenderers(offset);
             MoveParticles(offset);
+#if UNITY_EDITOR
             OffsetEvent(offset);
+#endif
 
             Profiler.EndSample();
 
