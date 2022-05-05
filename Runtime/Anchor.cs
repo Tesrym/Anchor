@@ -13,12 +13,45 @@ namespace Tesrym.AnchorSystem {
     [DefaultExecutionOrder(-100)]
     public class Anchor : MonoBehaviour {
 
+        /// <summary>
+        /// Anchor singleton
+        /// </summary>
         public static Anchor Instance {
             get; private set;
         } = null;
 
+        /// <summary>
+        /// If Anchor need to replace the scene back to original place when disabled
+        /// </summary>
+        [SerializeField]
+        private bool _replaceSceneWhenDisable;
+
+        /// <summary>
+        /// Is line offset enabled.
+        /// </summary>
+        [SerializeField]
+        private bool _offsetLine = true;
+        
+        /// <summary>
+        /// Is trial offset enabled.
+        /// </summary>
+        [SerializeField]
+        private bool _offsetTrail = true;
+
+        /// <summary>
+        /// Is particle offset enabled.
+        /// </summary>
+        [SerializeField]
+        private bool _offsetParticle = true;
+
+        /// <summary>
+        /// The min radius for Anchor to offset the scene
+        /// </summary>
         [SerializeField]
         private float _radius = 1000;
+        /// <summary>
+        /// The min radius for Anchor to offset the scene
+        /// </summary>
         public static float Radius {
             get {
                 if (Instance != null) {
@@ -38,8 +71,14 @@ namespace Tesrym.AnchorSystem {
             }
         }
 
+        /// <summary>
+        /// The current real world origin coordinate relative to the scene origin
+        /// </summary>
         [SerializeField]
         private Vector3 _worldOrigin = Vector3.zero;
+        /// <summary>
+        /// The current real world origin coordinate relative to the scene origin
+        /// </summary>
         public static Vector3 WorldOrigin {
             get {
                 if (Instance != null) {
@@ -60,37 +99,65 @@ namespace Tesrym.AnchorSystem {
         }
 
         //Unity events for simplicity
+        
+        /// <summary>
+        /// Call the event when offsetting the scene, pass in the offset Vector
+        /// </summary>
         public UnityEvent<Vector3> offsetUnityEvent;
+        /// <summary>
+        /// Call the event when offsetting the scene, pass in the new world origin Vector
+        /// </summary>
         public UnityEvent<Vector3> originUnityEvent;
 
         //Required for editor script and initially not intended for builds.
         //But leaving it for builds anyway.
+#if UNITY_EDITOR
         public static event Action<Vector3> OffsetEvent = (offset) => {};
+#endif
 
 #if UNITY_EDITOR
+        /// <summary>
+        /// If show the current Anchor detect region.
+        /// </summary>
         [SerializeField]
         private bool showAnchor = false;
+        /// <summary>
+        /// If show the real world orgin position
+        /// </summary>
         [SerializeField]
         private bool showOrigin = false;
+        /// <summary>
+        /// Timer for performance statistic
+        /// </summary>
         private Stopwatch timer = new Stopwatch();
         [SerializeField]
         private double frameTime;
 #endif
 
         private void OnEnable() {
+            // initialize singleton
             Instance = this;
             Run();
         }
 
+        // Run the anchor update in Fixed update for better performance and prevent some physics error.
+        // Also friendly for some position-relevant logic run in FixedUpdate() of other MonoBehaviour
         private void FixedUpdate() {
             Run();
         }
 
         private void OnDisable() {
-            Stop();
+            // No need for running the anchor offset logic again when Disable
+            // When disable the Anchor,
+            // some missing method in the offset and origin event may cause exception
+            if (_replaceSceneWhenDisable)
+            {
+                Stop();
+            }
             Instance = null;
         }
 
+#if UNITY_EDITOR
         private void OnDrawGizmos() {
             //Animated selection radius for the user in green.
             //Shows which mode is used, anchor (blue) or scene origin (red).
@@ -120,7 +187,11 @@ namespace Tesrym.AnchorSystem {
                 }
             }
         }
+#endif
 
+        /// <summary>
+        /// The main logic of Anchor scene offset
+        /// </summary>
         private void Run() {
             Vector3 offset = transform.position;
 
@@ -133,11 +204,16 @@ namespace Tesrym.AnchorSystem {
                 Profiler.BeginSample("Anchor reposition", this);
                 
                 MoveRootGameObjects(offset);
-                MoveTrailRenderers(offset);
-                MoveLineRenderers(offset);
-                MoveParticles(offset);
+                if(_offsetTrail)
+                    MoveTrailRenderers(offset);
+                if(_offsetLine)
+                    MoveLineRenderers(offset);
+                if(_offsetParticle)
+                    MoveParticles(offset);
+#if UNITY_EDITOR
                 OffsetEvent(offset);
-
+#endif
+                
                 Profiler.EndSample();
 
                 offsetUnityEvent?.Invoke(offset);
@@ -155,6 +231,10 @@ namespace Tesrym.AnchorSystem {
             
         }
 
+        /// <summary>
+        /// When running Stop method,
+        /// Anchor will force replace the scene back to the original position
+        /// </summary>
         private void Stop() {
             Vector3 offset = WorldOrigin;
 
@@ -165,10 +245,15 @@ namespace Tesrym.AnchorSystem {
             Profiler.BeginSample("Anchor stop", this);
             
             MoveRootGameObjects(offset);
-            MoveTrailRenderers(offset);
-            MoveLineRenderers(offset);
-            MoveParticles(offset);
+            if(_offsetTrail)
+                MoveTrailRenderers(offset);
+            if(_offsetLine)
+                MoveLineRenderers(offset);
+            if(_offsetParticle)
+                MoveParticles(offset);
+#if UNITY_EDITOR
             OffsetEvent(offset);
+#endif
 
             Profiler.EndSample();
 
@@ -185,6 +270,10 @@ namespace Tesrym.AnchorSystem {
 
         }
 
+        /// <summary>
+        /// Call this method to offset all the root GameObjects
+        /// </summary>
+        /// <param name="offset">the Vector3 to offset</param>
         private void MoveRootGameObjects(Vector3 offset) {
             for (int i = 0; i < SceneManager.sceneCount; i++) {
                 foreach (GameObject gameObject in SceneManager.GetSceneAt(i).GetRootGameObjects())
@@ -193,6 +282,10 @@ namespace Tesrym.AnchorSystem {
             }
         }
 
+        /// <summary>
+        /// Call this method to offset all the TrailRenderers
+        /// </summary>
+        /// <param name="offset">the Vector3 to offset</param>
         private void MoveTrailRenderers(Vector3 offset) {
             TrailRenderer[] trailRenderers = FindObjectsOfType<TrailRenderer>();
             foreach (TrailRenderer trailRenderer in trailRenderers) {
@@ -206,6 +299,10 @@ namespace Tesrym.AnchorSystem {
             }
         }
 
+        /// <summary>
+        /// Call this method to offset all the LineRenderers
+        /// </summary>
+        /// <param name="offset">the Vector3 to offset</param>
         private void MoveLineRenderers(Vector3 offset) {
             LineRenderer[] lineRenderers = FindObjectsOfType<LineRenderer>();
             foreach (LineRenderer line in lineRenderers) {
@@ -219,6 +316,10 @@ namespace Tesrym.AnchorSystem {
             }
         }
 
+        /// <summary>
+        /// Call this method to offset all the Particles
+        /// </summary>
+        /// <param name="offset">the Vector3 to offset</param>
         private void MoveParticles(Vector3 offset) {
             ParticleSystem[] particleSystems = FindObjectsOfType<ParticleSystem>();
             foreach (ParticleSystem particleSystem in particleSystems) {
@@ -244,6 +345,9 @@ namespace Tesrym.AnchorSystem {
                 }
 
                 particleSystem.SetParticles(parts, num);
+
+                // TODO: When particle trail API is available, add the particle trail offset here
+                // relative link: https://forum.unity.com/threads/is-it-possible-to-alter-particle-system-trail-parameters-from-a-trigger-collider.942292/
 
                 if (wasPlaying)
                     particleSystem.Play();
