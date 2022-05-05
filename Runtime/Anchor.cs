@@ -27,6 +27,24 @@ namespace Tesrym.AnchorSystem {
         private bool _replaceSceneWhenDisable;
 
         /// <summary>
+        /// Is line offset enabled.
+        /// </summary>
+        [SerializeField]
+        private bool _offsetLine = true;
+        
+        /// <summary>
+        /// Is trial offset enabled.
+        /// </summary>
+        [SerializeField]
+        private bool _offsetTrail = true;
+
+        /// <summary>
+        /// Is particle offset enabled.
+        /// </summary>
+        [SerializeField]
+        private bool _offsetParticle = true;
+
+        /// <summary>
         /// The min radius for Anchor to offset the scene
         /// </summary>
         [SerializeField]
@@ -186,9 +204,12 @@ namespace Tesrym.AnchorSystem {
                 Profiler.BeginSample("Anchor reposition", this);
                 
                 MoveRootGameObjects(offset);
-                MoveTrailRenderers(offset);
-                MoveLineRenderers(offset);
-                MoveParticles(offset);
+                if(_offsetTrail)
+                    MoveTrailRenderers(offset);
+                if(_offsetLine)
+                    MoveLineRenderers(offset);
+                if(_offsetParticle)
+                    MoveParticles(offset);
 #if UNITY_EDITOR
                 OffsetEvent(offset);
 #endif
@@ -224,9 +245,12 @@ namespace Tesrym.AnchorSystem {
             Profiler.BeginSample("Anchor stop", this);
             
             MoveRootGameObjects(offset);
-            MoveTrailRenderers(offset);
-            MoveLineRenderers(offset);
-            MoveParticles(offset);
+            if(_offsetTrail)
+                MoveTrailRenderers(offset);
+            if(_offsetLine)
+                MoveLineRenderers(offset);
+            if(_offsetParticle)
+                MoveParticles(offset);
 #if UNITY_EDITOR
             OffsetEvent(offset);
 #endif

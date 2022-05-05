@@ -16,6 +16,10 @@ namespace Tesrym.AnchorSystem {
         private SerializedProperty originEvent;
 #endif
 
+        private SerializedProperty offsetTrail;
+        private SerializedProperty offsetLine;
+        private SerializedProperty offsetParticle;
+
         private SerializedProperty showAnchor;
         private SerializedProperty showOrigin;
         private SerializedProperty timer;
@@ -43,6 +47,9 @@ namespace Tesrym.AnchorSystem {
             offsetEvent = serializedObject.FindProperty("offsetUnityEvent");
             originEvent = serializedObject.FindProperty("originUnityEvent");
 #endif
+            offsetTrail = serializedObject.FindProperty("_offsetTrail");
+            offsetLine = serializedObject.FindProperty("_offsetLine");
+            offsetParticle = serializedObject.FindProperty("_offsetParticle");
 
             showAnchor = serializedObject.FindProperty("showAnchor");
             showOrigin = serializedObject.FindProperty("showOrigin");
@@ -106,6 +113,9 @@ namespace Tesrym.AnchorSystem {
             EditorGUI.BeginChangeCheck();
             EditorGUIUtility.labelWidth = totalWidth - 55;
             EditorGUILayout.PropertyField(replace);
+            EditorGUILayout.PropertyField(offsetTrail);
+            EditorGUILayout.PropertyField(offsetLine);
+            EditorGUILayout.PropertyField(offsetParticle);
             
             EditorGUIUtility.labelWidth = 50;
             EditorGUILayout.BeginHorizontal();
